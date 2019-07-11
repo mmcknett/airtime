@@ -1,54 +1,67 @@
 import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Image,
+  Button,
+  KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
+  TextInput,
   View,
 } from 'react-native';
 
-import { MonoText } from '../components/StyledText';
 import { Airpad } from '../components/Airpad';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
+  const [names, setNames] = useState([]);
+  const [addText, setAddText] = useState('');
+
+  const addName = () => {
+    const namesCopy = names.slice();
+    namesCopy.push(addText);
+    console.log('names:', namesCopy)
+    setNames(namesCopy);
+    setAddText('');
+  }
+
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+        <Text style={{ fontSize: 24, textAlign: 'center', margin: 10 }}>Airtime</Text>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}>
+          <View style={styles.getStartedContainer}>
+            <Airpad names={ names }/>
+          </View>
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            borderColor: '#bbb',
+            borderTopWidth: 0.5
+          }}
+        >
+          <TextInput
+            placeholder='Enter a name'
+            onChangeText={ text => setAddText(text) }
+            value={ addText }
+            style={{
+              flexGrow: 1,
+              padding: 4
+            }}
+          />
+          <Button
+            title='Add'
+            onPress={ addName }
+            style={{ flexShrink: 1, paddingHorizontal: 20 }}
           />
         </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-          <Airpad />
-        </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -104,7 +117,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 5,
+    flex: 0
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -120,7 +134,8 @@ const styles = StyleSheet.create({
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    marginHorizontal: 20,
+    flex: 0
   },
   homeScreenFilename: {
     marginVertical: 7,

@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ProgressViewIOS, Text, TouchableOpacity, View } from 'react-native';
 
 export function Airpad(props) {
-  const [nameTimes, setNameTimes] = useState([
-    { name: 'Matt', time: 0 },
-    { name: 'Amy', time: 0 }
-  ]);
+  const [nameTimes, setNameTimes] = useState(props.names.map(name => ({ name, time: 0 })));
+  console.log('name times', nameTimes);
 
-  const sum = nameTimes.reduce((a, b) => a.time + b.time);
+  const sum = nameTimes.reduce((total, nameTime) => { 
+    console.log('total is', total, 'and nameTime is', nameTime);
+    return total + nameTime.time;
+  }, 0);
+  console.log('sum', sum);
+
+  useEffect(() => {
+    setNameTimes(props.names.map(name => ({ name, time: 0 })));
+  }, [props.names]);
 
   const addTime = (index, timeToAdd) => {
     const newNameTimes = nameTimes.slice();
@@ -24,7 +30,8 @@ export function Airpad(props) {
   }
 
   return (
-    <>
+    <View style={{ flex: 1, flexDirection: "column", maxWidth: '100%' }}>
+      <Button title="Reset times" onPress={ resetAllTimes } style={{ marginBottom: 16 }} />
       { 
         nameTimes.map(
           ({ name, time }, index) => 
@@ -36,8 +43,7 @@ export function Airpad(props) {
             />
         )
       }
-      <Button title="Reset times" onPress={ resetAllTimes } />
-    </>
+    </View>
   );
 }
 
@@ -61,21 +67,29 @@ function NameTime(props) {
       style={{
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: 20
+        justifyContent: 'space-between',
+        margin: 10
       }}
     >
       <ProgressViewIOS
         progress={ props.fraction }
         progressViewStyle='bar'
-        style={{ width: 150, alignSelf: 'center' }}/>
+        style={{ flex: -1, minWidth: 150, width: 150, alignSelf: 'center' }}/>
       <TouchableOpacity
         title={ props.name }
         onPressIn={ onPressIn }
         onPressOut={ onPressOut }
-        style={{ border: 1 }}
+        style={{
+          borderRadius: 5,
+          borderStyle: 'solid',
+          backgroundColor: '#B0C0E0',
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+          marginLeft: 20,
+          flexShrink: 1,
+        }}
       >
-        <Text style={{ fontSize: 24 }}>{ props.name }</Text>
+        <Text style={{ fontSize: 28, lineHeight: 50 }} numberOfLines={1}>{ props.name }</Text>
       </TouchableOpacity>
     </View>
   );
